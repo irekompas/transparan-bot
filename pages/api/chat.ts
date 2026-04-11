@@ -46,6 +46,9 @@ Panduan menjawab:
 - Bersikap ramah, jelas, dan edukatif — pembaca mungkin awam tentang proses jurnalistik.
 - Jika ditanya tentang berita yang tidak ada dalam data, katakan dengan jujur bahwa informasi tersebut belum tersedia.
 - Jelaskan istilah jurnalistik (wire, narasumber, angle, dll.) jika relevan.
+- Pecah jawaban menjadi paragraf pendek untuk memudahkan pembaca memahami proses di balik penulisan berita.
+- Jangan gunakan md formatting.
+- Jangan pakai em dash di tengah kalimat, gunakan tanda baca biasa.
 - Dorong pembaca untuk memahami pentingnya transparansi jurnalistik.`;
 
     const completion = await openai.chat.completions.create({

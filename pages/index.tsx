@@ -143,7 +143,7 @@ export default function Home() {
         <header className="header">
           <div className="header-top-bar" />
           <div className="header-inner">
-            <span className="kompas-label">KOMPAS</span>
+            <span className="kompas-label">CHATBOT AI</span>
             <h3 className="header-title">Transparansi di Balik Berita</h3>
             <p className="header-subtitle">Ruang transparansi pemberitaan harian Kompas</p>
           </div>
