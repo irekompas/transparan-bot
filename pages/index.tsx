@@ -259,6 +259,10 @@ export default function Home() {
             </button>
           </div>
         </footer>
+        {/* ATTRIBUTION FOOTER */}
+        <div className="attr-footer">
+          Dibuat oleh <strong>Nama Kamu</strong> · Kompas 2026
+        </div>
       </div>
 
       <style jsx global>{`
