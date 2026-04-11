@@ -555,6 +555,16 @@ export default function Home() {
         }
         .send-btn:hover:not(:disabled) { background: #004a82; }
         .send-btn:disabled { background: #9ab8d0; cursor: not-allowed; }
+        .attr-footer {
+  text-align: center;
+  padding: 8px 24px;
+  font-family: 'PT Sans', sans-serif;
+  font-size: 11px;
+  color: #aaaaaa;
+  border-top: 1px solid #e2e2e2;
+  background: #ffffff;
+  flex-shrink: 0;
+}
       `}</style>
     </>
   );
