@@ -261,7 +261,7 @@ export default function Home() {
         </footer>
         {/* ATTRIBUTION FOOTER */}
         <div className="attr-footer">
-          Dibuat oleh <strong>Nama Kamu</strong> · Kompas 2026
+          Dibuat oleh <strong>Irene Sarwindaningrum dan Satrio Pangarso Wisanggeni dengan bantuan AI.</strong> · Kompas 2026
         </div>
       </div>
 
