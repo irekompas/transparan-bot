@@ -290,7 +290,6 @@ export default function Home() {
           font-family: 'PT Sans', sans-serif;
           font-weight: 700;
           font-size: 11px;
-          letter-spacing: 0.2em;
           color: #c92b2c;
           margin-bottom: 5px;
         }
