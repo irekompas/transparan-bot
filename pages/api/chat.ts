@@ -10,16 +10,30 @@ export default async function handler(
 ) {
   if (req.method !== "POST") return res.status(405).end();
 
-  const { messages } = req.body;
+  const { messages, selectedBerita } = req.body;
   if (!messages || !Array.isArray(messages)) {
     return res.status(400).json({ error: "messages array required" });
   }
 
   try {
     const newsItems = await fetchSheetData();
-    const knowledgeBase = formatKnowledgeBase(newsItems);
+
+    // Filter to selected berita if provided
+    const filtered =
+      selectedBerita && ["1", "2", "3"].includes(selectedBerita)
+        ? newsItems.filter((_, i) => String(i + 1) === selectedBerita)
+        : newsItems;
+
+    const knowledgeBase = formatKnowledgeBase(filtered);
+
+    const focusNote =
+      selectedBerita
+        ? `Pengguna sedang membaca berita nomor ${selectedBerita}. Fokuskan jawabanmu pada berita tersebut, kecuali pengguna bertanya tentang berita lain secara eksplisit.`
+        : `Pengguna tidak memilih berita tertentu. Kamu boleh menjawab tentang semua berita yang tersedia.`;
 
     const systemPrompt = `Kamu adalah asisten transparansi jurnalistik Kompas. Tugasmu adalah membantu pembaca memahami bagaimana wartawan Kompas menulis dan melaporkan berita secara profesional.
+
+${focusNote}
 
 Gunakan HANYA informasi berikut sebagai sumber pengetahuanmu. Jangan mengarang atau menambahkan informasi di luar ini.
 
