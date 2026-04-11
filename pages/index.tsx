@@ -74,7 +74,7 @@ export default function Home() {
         {/* HEADER */}
         <header className="masthead">
           <div className="masthead-top">
-            <div className="kompas-wordmark">KOMPAS</div>
+            <div className="kompas-wordmark">CHATBOT</div>
             <div className="masthead-top-rule" />
           </div>
           <div className="masthead-titles">
