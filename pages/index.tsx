@@ -59,36 +59,36 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Transparansi Berita — Kompas</title>
+        <title>Transparansi di Balik Berita — Kompas</title>
         <meta
           name="description"
-          content="Tanya bagaimana wartawan Kompas meliput berita"
+          content="Ruang transparansi pemberitaan harian Kompas"
         />
         <link
-          href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;1,300&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=PT+Sans:wght@400;700&display=swap"
           rel="stylesheet"
         />
       </Head>
 
       <div className="root">
-        {/* MASTHEAD */}
+        {/* HEADER */}
         <header className="masthead">
-          <div className="masthead-inner">
-            <div className="masthead-rule" />
-            <div className="masthead-center">
-              <span className="kicker">Ruang Transparansi</span>
-              <h1 className="brand">KOMPAS</h1>
-              <p className="tagline">Tanya bagaimana berita ini ditulis</p>
-            </div>
-            <div className="masthead-rule" />
+          <div className="masthead-top">
+            <div className="kompas-wordmark">KOMPAS</div>
+            <div className="masthead-top-rule" />
           </div>
+          <div className="masthead-titles">
+            <h3 className="main-title">Transparansi di Balik Berita</h3>
+            <p className="subtitle">Ruang transparansi pemberitaan harian Kompas</p>
+          </div>
+          <div className="masthead-gold-bar" />
         </header>
 
         {/* CHAT AREA */}
         <main className="chat-area">
           {messages.length === 0 && (
             <div className="empty-state">
-              <p className="empty-headline">Mulai percakapan</p>
+              <p className="empty-headline">Apa yang ingin Anda ketahui?</p>
               <p className="empty-sub">
                 Tanyakan tentang proses pelaporan, narasumber, wire berita, atau
                 metode verifikasi dari berita-berita terbaru Kompas.
@@ -96,6 +96,7 @@ export default function Home() {
               <div className="suggestions">
                 {SUGGESTED.map((s) => (
                   <button key={s} className="suggestion-chip" onClick={() => send(s)}>
+                    <span className="chip-arrow">→</span>
                     {s}
                   </button>
                 ))}
@@ -153,9 +154,9 @@ export default function Home() {
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html, body { height: 100%; }
         body {
-          background: #f5f0e8;
-          color: #1a1206;
-          font-family: 'Source Serif 4', Georgia, serif;
+          background: #ffffff;
+          color: #111111;
+          font-family: 'PT Sans', sans-serif;
         }
       `}</style>
 
@@ -164,84 +165,120 @@ export default function Home() {
           display: flex;
           flex-direction: column;
           height: 100vh;
-          max-width: 780px;
+          max-width: 800px;
           margin: 0 auto;
+          background: #fff;
         }
 
-        /* MASTHEAD */
+        /* HEADER */
         .masthead {
-          background: #f5f0e8;
-          padding: 24px 20px 16px;
-          border-bottom: 3px double #1a1206;
+          background: #fff;
+          padding: 20px 24px 0;
+          border-bottom: 1px solid #e0e0e0;
         }
-        .masthead-inner { display: flex; flex-direction: column; gap: 10px; }
-        .masthead-rule { height: 1px; background: #1a1206; }
-        .masthead-center { text-align: center; padding: 4px 0; }
-        .kicker {
-          font-family: 'Source Serif 4', serif;
-          font-size: 10px;
-          font-weight: 300;
-          letter-spacing: 0.25em;
-          text-transform: uppercase;
-          color: #c0392b;
-          display: block;
+        .masthead-top {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          margin-bottom: 14px;
+        }
+        .kompas-wordmark {
+          font-family: 'PT Sans', sans-serif;
+          font-weight: 700;
+          font-size: 13px;
+          letter-spacing: 0.18em;
+          color: #c92b2c;
+          flex-shrink: 0;
+        }
+        .masthead-top-rule {
+          flex: 1;
+          height: 1px;
+          background: #e0e0e0;
+        }
+        .masthead-titles {
+          padding-bottom: 14px;
+        }
+        .main-title {
+          font-family: 'Lora', Georgia, serif;
+          font-weight: 700;
+          font-size: clamp(20px, 3.5vw, 26px);
+          color: #111111;
+          line-height: 1.2;
           margin-bottom: 4px;
         }
-        .brand {
-          font-family: 'Playfair Display', Georgia, serif;
-          font-size: clamp(32px, 6vw, 52px);
-          font-weight: 700;
-          letter-spacing: 0.08em;
-          line-height: 1;
-          color: #1a1206;
-        }
-        .tagline {
-          font-family: 'Source Serif 4', serif;
-          font-style: italic;
+        .subtitle {
+          font-family: 'PT Sans', sans-serif;
+          font-weight: 400;
           font-size: 13px;
-          font-weight: 300;
-          color: #5a4a3a;
-          margin-top: 4px;
+          color: #555555;
+        }
+        .masthead-gold-bar {
+          height: 3px;
+          background: linear-gradient(90deg, #00599A 0%, #00599A 60%, #F3C727 60%, #F3C727 100%);
         }
 
         /* CHAT */
         .chat-area {
           flex: 1;
           overflow-y: auto;
-          padding: 28px 20px;
+          padding: 28px 24px;
           display: flex;
           flex-direction: column;
-          gap: 20px;
+          gap: 18px;
+          background: #fafafa;
         }
 
         /* EMPTY STATE */
-        .empty-state { margin: auto; text-align: center; max-width: 520px; }
+        .empty-state {
+          margin: auto;
+          text-align: left;
+          max-width: 540px;
+          width: 100%;
+        }
         .empty-headline {
-          font-family: 'Playfair Display', Georgia, serif;
-          font-size: 22px;
-          margin-bottom: 10px;
+          font-family: 'Lora', Georgia, serif;
+          font-weight: 700;
+          font-size: 18px;
+          color: #111;
+          margin-bottom: 8px;
         }
         .empty-sub {
+          font-family: 'PT Sans', sans-serif;
           font-size: 14px;
-          font-weight: 300;
-          color: #5a4a3a;
-          line-height: 1.7;
-          margin-bottom: 24px;
+          color: #666;
+          line-height: 1.65;
+          margin-bottom: 22px;
         }
-        .suggestions { display: flex; flex-direction: column; gap: 10px; }
+        .suggestions {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
         .suggestion-chip {
-          background: white;
-          border: 1px solid #c8b89a;
-          border-left: 3px solid #c0392b;
-          padding: 10px 16px;
+          background: #fff;
+          border: 1px solid #d8d8d8;
+          border-left: 3px solid #00599A;
+          padding: 10px 14px;
           text-align: left;
-          font-family: 'Source Serif 4', serif;
-          font-size: 13px;
-          color: #1a1206;
+          font-family: 'PT Sans', sans-serif;
+          font-size: 13.5px;
+          font-weight: 400;
+          color: #222;
           cursor: pointer;
-          transition: background 0.15s;
+          transition: border-color 0.15s, background 0.15s;
+          display: flex;
+          align-items: center;
+          gap: 10px;
         }
-        .suggestion-chip:hover { background: #ede8df; }
+        .suggestion-chip:hover {
+          background: #f0f6fd;
+          border-left-color: #00599A;
+        }
+        .chip-arrow {
+          color: #00599A;
+          font-size: 13px;
+          flex-shrink: 0;
+        }
 
         /* MESSAGES */
         .message-row { display: flex; }
@@ -250,78 +287,88 @@ export default function Home() {
 
         .message-bubble {
           max-width: 78%;
-          padding: 14px 18px;
+          padding: 12px 16px;
           line-height: 1.7;
           font-size: 14.5px;
-          font-weight: 300;
+          font-family: 'PT Sans', sans-serif;
+          font-weight: 400;
         }
         .message-row.user .message-bubble {
-          background: #1a1206;
-          color: #f5f0e8;
+          background: #00599A;
+          color: #fff;
+          border-radius: 2px;
         }
         .message-row.assistant .message-bubble {
-          background: white;
-          border: 1px solid #c8b89a;
-          border-left: 3px solid #c0392b;
+          background: #fff;
+          border: 1px solid #e0e0e0;
+          border-left: 3px solid #F3C727;
+          border-radius: 2px;
         }
         .bubble-label {
           display: block;
+          font-family: 'PT Sans', sans-serif;
+          font-weight: 700;
           font-size: 10px;
-          letter-spacing: 0.15em;
+          letter-spacing: 0.12em;
           text-transform: uppercase;
-          color: #c0392b;
+          color: #00599A;
           margin-bottom: 6px;
-          font-weight: 400;
         }
 
         /* TYPING */
         .typing-dots { display: flex; gap: 5px; padding: 4px 0; }
         .typing-dots span {
           width: 6px; height: 6px;
-          background: #c8b89a;
+          background: #00599A;
           border-radius: 50%;
+          opacity: 0.4;
           animation: bounce 1.2s infinite;
         }
         .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
         .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
         @keyframes bounce {
-          0%, 80%, 100% { transform: translateY(0); }
-          40% { transform: translateY(-6px); }
+          0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+          40% { transform: translateY(-6px); opacity: 1; }
         }
 
         /* INPUT */
         .input-bar {
-          border-top: 3px double #1a1206;
-          background: #f5f0e8;
-          padding: 16px 20px;
+          border-top: 1px solid #e0e0e0;
+          background: #fff;
+          padding: 14px 24px;
         }
-        .input-inner { display: flex; gap: 10px; }
+        .input-inner { display: flex; gap: 8px; }
         .input-field {
           flex: 1;
-          border: 1px solid #c8b89a;
-          background: white;
-          padding: 12px 16px;
-          font-family: 'Source Serif 4', serif;
+          border: 1px solid #d0d0d0;
+          background: #fff;
+          padding: 11px 14px;
+          font-family: 'PT Sans', sans-serif;
           font-size: 14px;
-          font-weight: 300;
-          color: #1a1206;
+          font-weight: 400;
+          color: #111;
           outline: none;
+          border-radius: 2px;
+          transition: border-color 0.15s;
         }
-        .input-field:focus { border-color: #1a1206; }
-        .input-field::placeholder { color: #a09080; }
+        .input-field:focus { border-color: #00599A; }
+        .input-field::placeholder { color: #aaa; }
         .send-btn {
-          background: #c0392b;
+          background: #00599A;
           color: white;
           border: none;
-          padding: 12px 22px;
-          font-family: 'Source Serif 4', serif;
+          padding: 11px 22px;
+          font-family: 'PT Sans', sans-serif;
+          font-weight: 700;
           font-size: 13px;
-          letter-spacing: 0.08em;
+          letter-spacing: 0.06em;
           cursor: pointer;
+          border-radius: 2px;
           transition: background 0.15s;
+          white-space: nowrap;
         }
-        .send-btn:hover:not(:disabled) { background: #a93226; }
-        .send-btn:disabled { background: #c8b89a; cursor: not-allowed; }
+        .send-btn:hover:not(:disabled) { background: #004a82; }
+        .send-btn:disabled { background: #b0c8de; cursor: not-allowed; }
       `}</style>
     </>
   );
