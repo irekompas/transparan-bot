@@ -12,6 +12,9 @@ export interface NewsItem {
   nama_narasumber_utama2: string;
   atribusi_narasumber_2: string;
   alasan_angle: string;
+  alasan_wire: string;
+  alasan_narasumber_1: string;
+  alasan_narasumber_2: string;
 }
 
 const SHEET_URL =
@@ -58,6 +61,9 @@ export async function fetchSheetData(): Promise<NewsItem[]> {
       nama_narasumber_utama2: get("nama_narasumber_utama2"),
       atribusi_narasumber_2: get("atribusi_narasumber_2"),
       alasan_angle: get("alasan_angle"),
+      alasan_wire: get("alasan_wire"),
+      alasan_narasumber_1: get("alasan_narasumber_1"),
+      alasan_narasumber_2: get("alasan_narasumber_2"),
     });
   }
 
@@ -81,6 +87,9 @@ Metode Pelaporan: ${item.metode_utama}
 Narasumber 1: ${item.nama_narasumber_utama1} (${item.atribusi_narasumber_1})
 Narasumber 2: ${item.nama_narasumber_utama2} (${item.atribusi_narasumber_2})
 Alasan Pemilihan Angle: ${item.alasan_angle}
+Alasan Pemilihan Wire: ${item.alasan_wire}
+Alasan Pemilihan Narasumber 1: ${item.alasan_narasumber_1}
+Alasan Pemilihan Narasumber 2: ${item.alasan_narasumber_2}
 `.trim();
     })
     .join("\n\n");

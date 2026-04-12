@@ -131,7 +131,7 @@ export default function Home() {
     <>
       <Head>
         <title>Transparansi di Balik Berita — Kompas</title>
-        <meta name="description" content="Ruang transparansi pemberitaan harian Kompas" />
+        <meta name="description" content="Ruang transparansi pemberitaan harian Kompas. Pahami proses jurnalistik di balik berita: dari sumber, metode, hingga alasan pemberitaan." />
         <link
           href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=PT+Sans:wght@400;700&display=swap"
           rel="stylesheet"
@@ -145,7 +145,7 @@ export default function Home() {
           <div className="header-inner">
             <span className="kompas-label">CHATBOT AI</span>
             <h3 className="header-title">Transparansi di Balik Berita</h3>
-            <p className="header-subtitle">Ruang transparansi pemberitaan harian Kompas</p>
+            <p className="header-subtitle">Ruang transparansi pemberitaan harian Kompas. Pahami proses jurnalistik di balik berita: dari sumber, metode, hingga alasan pemberitaan.</p>
           </div>
           <div className="header-accent-bar" />
 
