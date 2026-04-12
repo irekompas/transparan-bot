@@ -218,7 +218,18 @@ export default function Home() {
                   <span className="bubble-label">Asisten Transparansi</span>
                 )}
                 {m.content.split(/\n\n+/).map((para, j) => (
-                  <p key={j} style={j > 0 ? { marginTop: '10px' } : undefined}>{para}</p>
+                  <p
+                    key={j}
+                    style={j > 0 ? { marginTop: '10px' } : undefined}
+                    dangerouslySetInnerHTML={{
+                      __html: para
+                        .replace(/&/g, "&amp;")
+                        .replace(/</g, "&lt;")
+                        .replace(/>/g, "&gt;")
+                        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+                        .replace(/\*(.+?)\*/g, "<em>$1</em>"),
+                    }}
+                  />
                 ))}
               </div>
             </div>
