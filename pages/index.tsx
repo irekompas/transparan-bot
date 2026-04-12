@@ -217,7 +217,9 @@ export default function Home() {
                 {m.role === "assistant" && (
                   <span className="bubble-label">Asisten Transparansi</span>
                 )}
-                <p>{m.content}</p>
+                {m.content.split(/\n\n+/).map((para, j) => (
+                  <p key={j} style={j > 0 ? { marginTop: '10px' } : undefined}>{para}</p>
+                ))}
               </div>
             </div>
           ))}
