@@ -64,6 +64,7 @@ export async function fetchSheetData(): Promise<NewsItem[]> {
       alasan_wire: get("alasan_wire"),
       alasan_narasumber_1: get("alasan_narasumber_1"),
       alasan_narasumber_2: get("alasan_narasumber_2"),
+      Apakah_AI_digunakan_dalam_proses_berita_ini: get("Apakah_AI_digunakan_dalam_proses_berita_ini"),
     });
   }
 
