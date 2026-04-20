@@ -20,31 +20,49 @@ export interface NewsItem {
 
 const SHEET_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vSwDmKQ55VvM_BJqSdISJbERkHa23JBe0ER_c5mneaA5AOs5hqSQt0QgfHJ49qEmAj4ianyAik-TOJ4/pub?output=tsv";
+
 let cachedData: NewsItem[] | null = null;
 let cacheTimestamp = 0;
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const CACHE_TTL = 5 * 60 * 1000; // 5 menit
 
 export async function fetchSheetData(): Promise<NewsItem[]> {
   const now = Date.now();
+
   if (cachedData && now - cacheTimestamp < CACHE_TTL) {
     return cachedData;
   }
 
-  const res = await fetch(SHEET_URL, { next: { revalidate: 300 } });
-  if (!res.ok) throw new Error("Gagal mengambil data Google Sheet");
+  const res = await fetch(SHEET_URL, {
+    next: { revalidate: 300 },
+  });
+
+  if (!res.ok) {
+    throw new Error("Gagal mengambil data Google Sheet");
+  }
 
   const text = await res.text();
-  const rows = text.split("\n").map((r) => r.split("\t"));
 
-  // rows[0] = headers, rows[1..] = data columns (one per news item)
-  const headers = rows.map((r) => r[0].trim());
-  const numItems = rows[0].length - 1;
+  // Bersihkan baris kosong + parsing TSV
+  const rows = text
+    .split("\n")
+    .filter((r) => r.trim().length > 0)
+    .map((r) => r.split("\t"));
+
+  // Header ada di kolom pertama (format vertikal)
+  const headers = rows.map((r) =>
+    (r[0] || "").trim().replace(/\r/g, "")
+  );
+
+  const numItems = Math.max(0, rows[0].length - 1);
 
   const items: NewsItem[] = [];
+
   for (let col = 1; col <= numItems; col++) {
     const get = (field: string) => {
       const rowIdx = headers.indexOf(field);
-      return rowIdx >= 0 ? (rows[rowIdx]?.[col] || "").trim() : "";
+      return rowIdx >= 0
+        ? (rows[rowIdx]?.[col] || "").trim()
+        : "";
     };
 
     items.push({
@@ -64,12 +82,15 @@ export async function fetchSheetData(): Promise<NewsItem[]> {
       alasan_wire: get("alasan_wire"),
       alasan_narasumber_1: get("alasan_narasumber_1"),
       alasan_narasumber_2: get("alasan_narasumber_2"),
-      Apakah_AI_digunakan_dalam_proses_berita_ini: get("Apakah_AI_digunakan_dalam_proses_berita_ini"),
+      Apakah_AI_digunakan_dalam_proses_berita_ini: get(
+        "Apakah_AI_digunakan_dalam_proses_berita_ini"
+      ),
     });
   }
 
   cachedData = items;
   cacheTimestamp = now;
+
   return items;
 }
 
@@ -91,6 +112,7 @@ Alasan Pemilihan Angle: ${item.alasan_angle}
 Alasan Pemilihan Wire: ${item.alasan_wire}
 Alasan Pemilihan Narasumber 1: ${item.alasan_narasumber_1}
 Alasan Pemilihan Narasumber 2: ${item.alasan_narasumber_2}
+Penggunaan AI: ${item.Apakah_AI_digunakan_dalam_proses_berita_ini}
 `.trim();
     })
     .join("\n\n");
