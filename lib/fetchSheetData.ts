@@ -15,6 +15,7 @@ export interface NewsItem {
   alasan_wire: string;
   alasan_narasumber_1: string;
   alasan_narasumber_2: string;
+  Apakah_AI_digunakan_dalam_proses_berita_ini: string;
 }
 
 const SHEET_URL =
