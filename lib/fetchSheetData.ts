@@ -83,7 +83,7 @@ Tanggal: ${item.tanggal_liputan}
 Reporter: ${item.nama_reporter}
 Link: ${item.link_berita}
 Wire Utama: ${item.wire_utama}
-Wire Verifikasi: ${item.wire_verifikasi}
+Metode Verifikasi: ${item.metode_verifikasi}
 Metode Pelaporan: ${item.metode_utama}
 Narasumber 1: ${item.nama_narasumber_utama1} (${item.atribusi_narasumber_1})
 Narasumber 2: ${item.nama_narasumber_utama2} (${item.atribusi_narasumber_2})
