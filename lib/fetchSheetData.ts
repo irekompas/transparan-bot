@@ -47,6 +47,79 @@ function pickFirst(
   return "";
 }
 
+function buildNewsItem(rawFields: Record<string, string>): NewsItem {
+  return {
+    nomor_berita: pickFirst(rawFields, ["nomor_berita", "nomor", "id"]),
+    judul: pickFirst(rawFields, ["judul", "title", "headline"]),
+    link_berita: pickFirst(rawFields, [
+      "link_berita",
+      "url",
+      "link",
+      "tautan",
+    ]),
+    tanggal_liputan: pickFirst(rawFields, [
+      "tanggal_liputan_yyyymmdd",
+      "tanggal_liputan",
+      "tanggal",
+    ]),
+    nama_reporter: pickFirst(rawFields, [
+      "nama_reporter",
+      "reporter",
+      "penulis",
+    ]),
+    wire_utama: pickFirst(rawFields, ["wire_utama", "wire"]),
+    metode_verifikasi: pickFirst(rawFields, [
+      "metode_verifikasi",
+      "verifikasi",
+    ]),
+    metode_utama: pickFirst(rawFields, [
+      "metode_utama",
+      "metode_pelaporan",
+    ]),
+    nama_narasumber_utama1: pickFirst(rawFields, [
+      "nama_narasumber_utama1",
+      "narasumber_1",
+    ]),
+    atribusi_narasumber_1: pickFirst(rawFields, [
+      "atribusi_narasumber_1",
+    ]),
+    nama_narasumber_utama2: pickFirst(rawFields, [
+      "nama_narasumber_utama2",
+      "narasumber_2",
+    ]),
+    atribusi_narasumber_2: pickFirst(rawFields, [
+      "atribusi_narasumber_2",
+    ]),
+    alasan_angle: pickFirst(rawFields, ["alasan_angle"]),
+    alasan_wire: pickFirst(rawFields, ["alasan_wire"]),
+    alasan_narasumber_1: pickFirst(rawFields, ["alasan_narasumber_1"]),
+    alasan_narasumber_2: pickFirst(rawFields, ["alasan_narasumber_2"]),
+    apakah_ai: pickFirst(rawFields, [
+      "apakah_ai_digunakan_dalam_proses_berita_ini",
+      "apakah_ai",
+    ]),
+    isi_artikel: pickFirst(rawFields, [
+      "isi_artikel",
+      "konten_artikel",
+      "teks_artikel",
+      "body_artikel",
+      "full_text",
+    ]),
+    raw_fields: rawFields,
+  };
+}
+
+function isLikelyRowOriented(headers: string[]): boolean {
+  const rowPatternHints = [
+    "nomor_berita",
+    "judul",
+    "nama_reporter",
+    "isi_artikel",
+  ];
+  const matches = rowPatternHints.filter((hint) => headers.includes(hint));
+  return matches.length >= 2;
+}
+
 export async function fetchSheetData(): Promise<NewsItem[]> {
   const now = Date.now();
 
@@ -72,85 +145,41 @@ export async function fetchSheetData(): Promise<NewsItem[]> {
   if (rows.length === 0 || rows[0].length < 2) {
     throw new Error("Data Google Sheet kosong atau tidak valid");
   }
-
-  const headers = rows.map((r) => normalizeKey(r[0] || ""));
-
-  const numItems = Math.max(0, rows[0].length - 1);
-
+  const firstRowHeaders = rows[0].map((cell) => normalizeKey(cell));
   const items: NewsItem[] = [];
 
-  for (let col = 1; col <= numItems; col++) {
-    const rawFields: Record<string, string> = {};
-    headers.forEach((header, rowIdx) => {
-      if (!header) return;
-      rawFields[header] = (rows[rowIdx]?.[col] || "").trim();
-    });
+  if (isLikelyRowOriented(firstRowHeaders)) {
+    for (let rowIdx = 1; rowIdx < rows.length; rowIdx++) {
+      const row = rows[rowIdx];
+      const rawFields: Record<string, string> = {};
+      firstRowHeaders.forEach((header, colIdx) => {
+        if (!header) return;
+        rawFields[header] = (row[colIdx] || "").trim();
+      });
+      items.push(buildNewsItem(rawFields));
+    }
+  } else {
+    const headers = rows.map((r) => normalizeKey(r[0] || ""));
+    const numItems = Math.max(0, rows[0].length - 1);
 
-    items.push({
-      nomor_berita: pickFirst(rawFields, ["nomor_berita", "nomor", "id"]),
-      judul: pickFirst(rawFields, ["judul", "title", "headline"]),
-      link_berita: pickFirst(rawFields, [
-        "link_berita",
-        "url",
-        "link",
-        "tautan",
-      ]),
-      tanggal_liputan: pickFirst(rawFields, [
-        "tanggal_liputan_yyyymmdd",
-        "tanggal_liputan",
-        "tanggal",
-      ]),
-      nama_reporter: pickFirst(rawFields, [
-        "nama_reporter",
-        "reporter",
-        "penulis",
-      ]),
-      wire_utama: pickFirst(rawFields, ["wire_utama", "wire"]),
-      metode_verifikasi: pickFirst(rawFields, [
-        "metode_verifikasi",
-        "verifikasi",
-      ]),
-      metode_utama: pickFirst(rawFields, [
-        "metode_utama",
-        "metode_pelaporan",
-      ]),
-      nama_narasumber_utama1: pickFirst(rawFields, [
-        "nama_narasumber_utama1",
-        "narasumber_1",
-      ]),
-      atribusi_narasumber_1: pickFirst(rawFields, [
-        "atribusi_narasumber_1",
-      ]),
-      nama_narasumber_utama2: pickFirst(rawFields, [
-        "nama_narasumber_utama2",
-        "narasumber_2",
-      ]),
-      atribusi_narasumber_2: pickFirst(rawFields, [
-        "atribusi_narasumber_2",
-      ]),
-      alasan_angle: pickFirst(rawFields, ["alasan_angle"]),
-      alasan_wire: pickFirst(rawFields, ["alasan_wire"]),
-      alasan_narasumber_1: pickFirst(rawFields, ["alasan_narasumber_1"]),
-      alasan_narasumber_2: pickFirst(rawFields, ["alasan_narasumber_2"]),
-      apakah_ai: pickFirst(rawFields, [
-        "apakah_ai_digunakan_dalam_proses_berita_ini",
-        "apakah_ai",
-      ]),
-      isi_artikel: pickFirst(rawFields, [
-        "isi_artikel",
-        "konten_artikel",
-        "teks_artikel",
-        "body_artikel",
-        "full_text",
-      ]),
-      raw_fields: rawFields,
-    });
+    for (let col = 1; col <= numItems; col++) {
+      const rawFields: Record<string, string> = {};
+      headers.forEach((header, rowIdx) => {
+        if (!header) return;
+        rawFields[header] = (rows[rowIdx]?.[col] || "").trim();
+      });
+      items.push(buildNewsItem(rawFields));
+    }
   }
 
-  cachedData = items;
+  const filteredItems = items.filter(
+    (item) => item.judul || item.isi_artikel || item.nomor_berita
+  );
+
+  cachedData = filteredItems;
   cacheTimestamp = now;
 
-  return items;
+  return filteredItems;
 }
 
 export function formatKnowledgeBase(items: NewsItem[]): string {
