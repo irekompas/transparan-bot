@@ -5,7 +5,7 @@ export interface NewsItem {
   tanggal_liputan: string;
   nama_reporter: string;
   wire_utama: string;
-  wire_verifikasi: string;
+  metode_verifikasi: string;
   metode_utama: string;
   nama_narasumber_utama1: string;
   atribusi_narasumber_1: string;
@@ -54,7 +54,7 @@ export async function fetchSheetData(): Promise<NewsItem[]> {
       tanggal_liputan: get("tanggal_liputan_yyyymmdd"),
       nama_reporter: get("nama_reporter"),
       wire_utama: get("wire_utama"),
-      wire_verifikasi: get("wire_verifikasi"),
+      metode_verifikasi: get("metode_verifikasi"),
       metode_utama: get("metode_utama"),
       nama_narasumber_utama1: get("nama_narasumber_utama1"),
       atribusi_narasumber_1: get("atribusi_narasumber_1"),
