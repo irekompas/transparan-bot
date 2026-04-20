@@ -47,6 +47,10 @@ export async function fetchSheetData(): Promise<NewsItem[]> {
     .filter((r) => r.trim().length > 0)
     .map((r) => r.split("\t"));
 
+  if (rows.length === 0 || rows[0].length < 2) {
+    throw new Error("Data Google Sheet kosong atau tidak valid");
+  }
+
   const headers = rows.map((r) =>
     (r[0] || "").trim().replace(/\r/g, "")
   );
@@ -93,10 +97,16 @@ export async function fetchSheetData(): Promise<NewsItem[]> {
 }
 
 export function formatKnowledgeBase(items: NewsItem[]): string {
+  if (items.length === 0) {
+    return "Belum ada data transparansi berita yang tersedia.";
+  }
+
   return items
     .map((item, i) => {
+      const labelBerita = item.nomor_berita || String(i + 1);
+
       return `
---- BERITA ${i + 1} ---
+--- BERITA ${labelBerita} ---
 Judul: ${item.judul}
 Tanggal: ${item.tanggal_liputan}
 Reporter: ${item.nama_reporter}

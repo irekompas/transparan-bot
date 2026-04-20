@@ -28,6 +28,8 @@ const BERITA_LIST: BeritaInfo[] = [
   },
 ];
 
+const VALID_BERITA_NUMBERS = BERITA_LIST.map((b) => b.nomor);
+
 const ALL_SUGGESTIONS = [
   "Siapa reporter berita ini?",
   "Wire apa yang digunakan?",
@@ -48,9 +50,9 @@ export default function Home() {
   useEffect(() => {
     if (!router.isReady) return;
     const param = router.query.berita as string | undefined;
-    if (param && ["1"].includes(param)) {
-      setSelectedBerita(param);
-    }
+    setSelectedBerita(
+      param && VALID_BERITA_NUMBERS.includes(param) ? param : null
+    );
   }, [router.isReady, router.query.berita]);
 
   useEffect(() => {
@@ -86,10 +88,19 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: newMessages, selectedBerita }),
       });
+
       const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data?.error || "Terjadi kesalahan pada server.");
+      }
+
       setMessages([
         ...newMessages,
-        { role: "assistant", content: data.reply || data.error },
+        {
+          role: "assistant",
+          content: data.reply || "Maaf, saya belum bisa menjawab saat ini.",
+        },
       ]);
     } catch {
       setMessages([
@@ -231,7 +242,10 @@ export default function Home() {
             onKeyDown={(e) => e.key === "Enter" && send()}
             placeholder="Tanyakan sesuatu..."
           />
-          <button onClick={() => send()} disabled={!input}>
+          <button
+            onClick={() => send()}
+            disabled={loading || input.trim().length === 0}
+          >
             Kirim
           </button>
         </footer>
