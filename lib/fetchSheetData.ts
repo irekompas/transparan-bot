@@ -16,6 +16,8 @@ export interface NewsItem {
   alasan_narasumber_1: string;
   alasan_narasumber_2: string;
   apakah_ai: string;
+  isi_artikel: string;
+  raw_fields: Record<string, string>;
 }
 
 const SHEET_URL =
@@ -24,6 +26,99 @@ const SHEET_URL =
 let cachedData: NewsItem[] | null = null;
 let cacheTimestamp = 0;
 const CACHE_TTL = 5 * 60 * 1000;
+
+function normalizeKey(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/\r/g, "")
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+}
+
+function pickFirst(
+  map: Record<string, string>,
+  aliases: string[]
+): string {
+  for (const alias of aliases) {
+    const value = map[alias];
+    if (value && value.trim().length > 0) return value.trim();
+  }
+  return "";
+}
+
+function buildNewsItem(rawFields: Record<string, string>): NewsItem {
+  return {
+    nomor_berita: pickFirst(rawFields, ["nomor_berita", "nomor", "id"]),
+    judul: pickFirst(rawFields, ["judul", "title", "headline"]),
+    link_berita: pickFirst(rawFields, [
+      "link_berita",
+      "url",
+      "link",
+      "tautan",
+    ]),
+    tanggal_liputan: pickFirst(rawFields, [
+      "tanggal_liputan_yyyymmdd",
+      "tanggal_liputan",
+      "tanggal",
+    ]),
+    nama_reporter: pickFirst(rawFields, [
+      "nama_reporter",
+      "reporter",
+      "penulis",
+    ]),
+    wire_utama: pickFirst(rawFields, ["wire_utama", "wire"]),
+    metode_verifikasi: pickFirst(rawFields, [
+      "metode_verifikasi",
+      "verifikasi",
+    ]),
+    metode_utama: pickFirst(rawFields, [
+      "metode_utama",
+      "metode_pelaporan",
+    ]),
+    nama_narasumber_utama1: pickFirst(rawFields, [
+      "nama_narasumber_utama1",
+      "narasumber_1",
+    ]),
+    atribusi_narasumber_1: pickFirst(rawFields, [
+      "atribusi_narasumber_1",
+    ]),
+    nama_narasumber_utama2: pickFirst(rawFields, [
+      "nama_narasumber_utama2",
+      "narasumber_2",
+    ]),
+    atribusi_narasumber_2: pickFirst(rawFields, [
+      "atribusi_narasumber_2",
+    ]),
+    alasan_angle: pickFirst(rawFields, ["alasan_angle"]),
+    alasan_wire: pickFirst(rawFields, ["alasan_wire"]),
+    alasan_narasumber_1: pickFirst(rawFields, ["alasan_narasumber_1"]),
+    alasan_narasumber_2: pickFirst(rawFields, ["alasan_narasumber_2"]),
+    apakah_ai: pickFirst(rawFields, [
+      "apakah_ai_digunakan_dalam_proses_berita_ini",
+      "apakah_ai",
+    ]),
+    isi_artikel: pickFirst(rawFields, [
+      "isi_artikel",
+      "konten_artikel",
+      "teks_artikel",
+      "body_artikel",
+      "full_text",
+    ]),
+    raw_fields: rawFields,
+  };
+}
+
+function isLikelyRowOriented(headers: string[]): boolean {
+  const rowPatternHints = [
+    "nomor_berita",
+    "judul",
+    "nama_reporter",
+    "isi_artikel",
+  ];
+  const matches = rowPatternHints.filter((hint) => headers.includes(hint));
+  return matches.length >= 2;
+}
 
 export async function fetchSheetData(): Promise<NewsItem[]> {
   const now = Date.now();
@@ -59,41 +154,38 @@ export async function fetchSheetData(): Promise<NewsItem[]> {
 
   const items: NewsItem[] = [];
 
-  for (let col = 1; col <= numItems; col++) {
-    const get = (field: string) => {
-      const rowIdx = headers.indexOf(field);
-      return rowIdx >= 0
-        ? (rows[rowIdx]?.[col] || "").trim()
-        : "";
-    };
+  if (isLikelyRowOriented(firstRowHeaders)) {
+    for (let rowIdx = 1; rowIdx < rows.length; rowIdx++) {
+      const row = rows[rowIdx];
+      const rawFields: Record<string, string> = {};
+      firstRowHeaders.forEach((header, colIdx) => {
+        if (!header) return;
+        rawFields[header] = (row[colIdx] || "").trim();
+      });
+      items.push(buildNewsItem(rawFields));
+    }
+  } else {
+    const headers = rows.map((r) => normalizeKey(r[0] || ""));
+    const numItems = Math.max(0, rows[0].length - 1);
 
-    items.push({
-      nomor_berita: get("nomor_berita"),
-      judul: get("judul"),
-      link_berita: get("link_berita"),
-      tanggal_liputan: get("tanggal_liputan_yyyymmdd"),
-      nama_reporter: get("nama_reporter"),
-      wire_utama: get("wire_utama"),
-      metode_verifikasi: get("metode_verifikasi"),
-      metode_utama: get("metode_utama"),
-      nama_narasumber_utama1: get("nama_narasumber_utama1"),
-      atribusi_narasumber_1: get("atribusi_narasumber_1"),
-      nama_narasumber_utama2: get("nama_narasumber_utama2"),
-      atribusi_narasumber_2: get("atribusi_narasumber_2"),
-      alasan_angle: get("alasan_angle"),
-      alasan_wire: get("alasan_wire"),
-      alasan_narasumber_1: get("alasan_narasumber_1"),
-      alasan_narasumber_2: get("alasan_narasumber_2"),
-      apakah_ai: get(
-        "Apakah_AI_digunakan_dalam_proses_berita_ini"
-      ),
-    });
+    for (let col = 1; col <= numItems; col++) {
+      const rawFields: Record<string, string> = {};
+      headers.forEach((header, rowIdx) => {
+        if (!header) return;
+        rawFields[header] = (rows[rowIdx]?.[col] || "").trim();
+      });
+      items.push(buildNewsItem(rawFields));
+    }
   }
 
-  cachedData = items;
+  const filteredItems = items.filter(
+    (item) => item.judul || item.isi_artikel || item.nomor_berita
+  );
+
+  cachedData = filteredItems;
   cacheTimestamp = now;
 
-  return items;
+  return filteredItems;
 }
 
 export function formatKnowledgeBase(items: NewsItem[]): string {
@@ -121,6 +213,9 @@ Alasan Pemilihan Wire: ${item.alasan_wire}
 Alasan Pemilihan Narasumber 1: ${item.alasan_narasumber_1}
 Alasan Pemilihan Narasumber 2: ${item.alasan_narasumber_2}
 Penggunaan AI: ${item.apakah_ai}
+Isi Artikel Lengkap: ${item.isi_artikel}
+Detail Tambahan:
+${extraFields || "-"}
 `.trim();
     })
     .join("\n\n");
