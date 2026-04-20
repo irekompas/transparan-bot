@@ -15,7 +15,7 @@ export interface NewsItem {
   alasan_wire: string;
   alasan_narasumber_1: string;
   alasan_narasumber_2: string;
-  Apakah_AI_digunakan_dalam_proses_berita_ini: string;
+  apakah_ai: string;
 }
 
 const SHEET_URL =
@@ -23,7 +23,7 @@ const SHEET_URL =
 
 let cachedData: NewsItem[] | null = null;
 let cacheTimestamp = 0;
-const CACHE_TTL = 5 * 60 * 1000; // 5 menit
+const CACHE_TTL = 5 * 60 * 1000;
 
 export async function fetchSheetData(): Promise<NewsItem[]> {
   const now = Date.now();
@@ -42,13 +42,11 @@ export async function fetchSheetData(): Promise<NewsItem[]> {
 
   const text = await res.text();
 
-  // Bersihkan baris kosong + parsing TSV
   const rows = text
     .split("\n")
     .filter((r) => r.trim().length > 0)
     .map((r) => r.split("\t"));
 
-  // Header ada di kolom pertama (format vertikal)
   const headers = rows.map((r) =>
     (r[0] || "").trim().replace(/\r/g, "")
   );
@@ -82,7 +80,7 @@ export async function fetchSheetData(): Promise<NewsItem[]> {
       alasan_wire: get("alasan_wire"),
       alasan_narasumber_1: get("alasan_narasumber_1"),
       alasan_narasumber_2: get("alasan_narasumber_2"),
-      Apakah_AI_digunakan_dalam_proses_berita_ini: get(
+      apakah_ai: get(
         "Apakah_AI_digunakan_dalam_proses_berita_ini"
       ),
     });
@@ -112,7 +110,7 @@ Alasan Pemilihan Angle: ${item.alasan_angle}
 Alasan Pemilihan Wire: ${item.alasan_wire}
 Alasan Pemilihan Narasumber 1: ${item.alasan_narasumber_1}
 Alasan Pemilihan Narasumber 2: ${item.alasan_narasumber_2}
-Penggunaan AI: ${item.Apakah_AI_digunakan_dalam_proses_berita_ini}
+Penggunaan AI: ${item.apakah_ai}
 `.trim();
     })
     .join("\n\n");
