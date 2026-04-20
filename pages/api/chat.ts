@@ -17,11 +17,14 @@ export default async function handler(
 
   try {
     const newsItems = await fetchSheetData();
+    const validBeritaNumbers = newsItems
+      .map((item) => item.nomor_berita)
+      .filter((n) => n && n.trim().length > 0);
 
     // Filter to selected berita if provided
     const filtered =
-      selectedBerita && ["1", "2", "3"].includes(selectedBerita)
-        ? newsItems.filter((_, i) => String(i + 1) === selectedBerita)
+      selectedBerita && validBeritaNumbers.includes(selectedBerita)
+        ? newsItems.filter((item) => item.nomor_berita === selectedBerita)
         : newsItems;
 
     const knowledgeBase = formatKnowledgeBase(filtered);
