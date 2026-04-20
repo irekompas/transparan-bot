@@ -145,7 +145,13 @@ export async function fetchSheetData(): Promise<NewsItem[]> {
   if (rows.length === 0 || rows[0].length < 2) {
     throw new Error("Data Google Sheet kosong atau tidak valid");
   }
-  const firstRowHeaders = rows[0].map((cell) => normalizeKey(cell));
+
+  const headers = rows.map((r) =>
+    (r[0] || "").trim().replace(/\r/g, "")
+  );
+
+  const numItems = Math.max(0, rows[0].length - 1);
+
   const items: NewsItem[] = [];
 
   if (isLikelyRowOriented(firstRowHeaders)) {
@@ -190,54 +196,6 @@ export function formatKnowledgeBase(items: NewsItem[]): string {
   return items
     .map((item, i) => {
       const labelBerita = item.nomor_berita || String(i + 1);
-      const extraFields = Object.entries(item.raw_fields)
-        .filter(([key, value]) => {
-          if (!value) return false;
-          const ignoredKeys = new Set([
-            "nomor_berita",
-            "nomor",
-            "id",
-            "judul",
-            "title",
-            "headline",
-            "link_berita",
-            "url",
-            "link",
-            "tautan",
-            "tanggal_liputan_yyyymmdd",
-            "tanggal_liputan",
-            "tanggal",
-            "nama_reporter",
-            "reporter",
-            "penulis",
-            "wire_utama",
-            "wire",
-            "metode_verifikasi",
-            "verifikasi",
-            "metode_utama",
-            "metode_pelaporan",
-            "nama_narasumber_utama1",
-            "narasumber_1",
-            "atribusi_narasumber_1",
-            "nama_narasumber_utama2",
-            "narasumber_2",
-            "atribusi_narasumber_2",
-            "alasan_angle",
-            "alasan_wire",
-            "alasan_narasumber_1",
-            "alasan_narasumber_2",
-            "apakah_ai_digunakan_dalam_proses_berita_ini",
-            "apakah_ai",
-            "isi_artikel",
-            "konten_artikel",
-            "teks_artikel",
-            "body_artikel",
-            "full_text",
-          ]);
-          return !ignoredKeys.has(key);
-        })
-        .map(([key, value]) => `${key}: ${value}`)
-        .join("\n");
 
       return `
 --- BERITA ${labelBerita} ---
